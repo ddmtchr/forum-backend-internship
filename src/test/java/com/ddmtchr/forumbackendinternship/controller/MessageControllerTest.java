@@ -62,9 +62,7 @@ public class MessageControllerTest extends AbstractControllerTest {
 
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
         String content = result.getResponse().getContentAsString();
-        Topic[] topicList = mapFromJson(content, Topic[].class);
-        assertTrue(topicList.length > 0);
-        Topic topic = Arrays.stream(topicList).filter(t -> t.getId().equals("89a0ecb0-2fdf-4aae-8761-40f3f5bca6c6")).findFirst().orElse(null);
+        Topic topic = mapFromJson(content, Topic.class);
         assertNotNull(topic);
         Message message = topic.getMessages().stream().filter(m -> m.getId().equals("9ded9493-64cb-4b4a-ac57-0d0732282d42")).findFirst().orElse(null);
         assertNotNull(message);

@@ -3,8 +3,7 @@ package com.ddmtchr.forumbackendinternship.controller;
 import com.ddmtchr.forumbackendinternship.database.entities.Topic;
 import com.ddmtchr.forumbackendinternship.payload.MessageDTO;
 import com.ddmtchr.forumbackendinternship.payload.TopicDTO;
-import com.ddmtchr.forumbackendinternship.payload.TopicUpdateDTO;
-import lombok.With;
+import com.ddmtchr.forumbackendinternship.payload.TopicNoMessagesDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -69,8 +68,8 @@ class TopicControllerTest extends AbstractControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void updateTopic_ReturnsOk() throws Exception {
-        TopicUpdateDTO topicUpdateDTO = new TopicUpdateDTO("89a0ecb0-2fdf-4aae-8761-40f3f5bca6c6", "Topic 1 New Name");
-        String inputJson = mapToJson(topicUpdateDTO);
+        TopicNoMessagesDTO topicNoMessagesDTO = new TopicNoMessagesDTO("89a0ecb0-2fdf-4aae-8761-40f3f5bca6c6", "Topic 1 New Name", null);
+        String inputJson = mapToJson(topicNoMessagesDTO);
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/topic")
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson)).andReturn();
 
@@ -85,8 +84,8 @@ class TopicControllerTest extends AbstractControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void updateTopic_WrongId_ReturnsNotFound() throws Exception {
-        TopicUpdateDTO topicUpdateDTO = new TopicUpdateDTO("aaa", "Topic 1 New Name");
-        String inputJson = mapToJson(topicUpdateDTO);
+        TopicNoMessagesDTO topicNoMessagesDTO = new TopicNoMessagesDTO("aaa", "Topic 1 New Name", null);
+        String inputJson = mapToJson(topicNoMessagesDTO);
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/topic")
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson)).andReturn();
 

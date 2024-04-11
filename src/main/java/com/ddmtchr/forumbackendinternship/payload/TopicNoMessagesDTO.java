@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class TopicUpdateDTO {
+public class TopicNoMessagesDTO {
     @NotNull
     private String id;
     @NotNull
-    private String topicName;
+    private String name;
+    private String created;
 }

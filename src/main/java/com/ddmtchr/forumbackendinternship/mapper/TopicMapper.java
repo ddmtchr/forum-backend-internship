@@ -2,6 +2,7 @@ package com.ddmtchr.forumbackendinternship.mapper;
 
 import com.ddmtchr.forumbackendinternship.database.entities.Topic;
 import com.ddmtchr.forumbackendinternship.payload.TopicDTO;
+import com.ddmtchr.forumbackendinternship.payload.TopicNoMessagesDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -20,4 +21,6 @@ public interface TopicMapper {
             @Mapping(target = "messages", expression = "java(new java.util.ArrayList<>())")
     })
     Topic toTopic(TopicDTO topicDTO);
+
+    TopicNoMessagesDTO toTopicMessageDTO(Topic topic);
 }

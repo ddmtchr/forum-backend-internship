@@ -2,7 +2,7 @@ package com.ddmtchr.forumbackendinternship.controller;
 
 import com.ddmtchr.forumbackendinternship.database.entities.Topic;
 import com.ddmtchr.forumbackendinternship.payload.TopicDTO;
-import com.ddmtchr.forumbackendinternship.payload.TopicUpdateDTO;
+import com.ddmtchr.forumbackendinternship.payload.TopicNoMessagesDTO;
 import com.ddmtchr.forumbackendinternship.service.TopicService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +36,8 @@ public class TopicController {
     }
 
     @PutMapping("/topic")
-    public ResponseEntity<?> updateTopic(@RequestBody @Valid TopicUpdateDTO topicUpdateDTO) {
-        if (topicService.updateTopic(topicUpdateDTO) == null) {
+    public ResponseEntity<?> updateTopic(@RequestBody @Valid TopicNoMessagesDTO topicNoMessagesDTO) {
+        if (topicService.updateTopic(topicNoMessagesDTO) == null) {
             return new ResponseEntity<>("Topic is not found", HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(topicService.findAllTopics());

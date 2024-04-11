@@ -5,7 +5,7 @@ import com.ddmtchr.forumbackendinternship.database.repository.TopicRepository;
 import com.ddmtchr.forumbackendinternship.mapper.MessageMapper;
 import com.ddmtchr.forumbackendinternship.mapper.TopicMapper;
 import com.ddmtchr.forumbackendinternship.payload.TopicDTO;
-import com.ddmtchr.forumbackendinternship.payload.TopicUpdateDTO;
+import com.ddmtchr.forumbackendinternship.payload.TopicNoMessagesDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +21,9 @@ public class TopicService {
         return topicRepository.existsById(id);
     }
 
-    public List<Topic> findAllTopics() {
-        return (List<Topic>) topicRepository.findAll();
+    public List<TopicNoMessagesDTO> findAllTopics() {
+        List<Topic> topics = (List<Topic>) topicRepository.findAll();
+        return topics.stream().map(TopicMapper.instance::toTopicMessageDTO).toList();
     }
 
     public Optional<Topic> findTopicById(String id) {
@@ -35,12 +36,12 @@ public class TopicService {
         return topicRepository.save(topic);
     }
 
-    public Topic updateTopic(TopicUpdateDTO topicUpdateDTO) {
-        Topic topic = topicRepository.findById(topicUpdateDTO.getId()).orElse(null);
+    public Topic updateTopic(TopicNoMessagesDTO topicNoMessagesDTO) {
+        Topic topic = topicRepository.findById(topicNoMessagesDTO.getId()).orElse(null);
         if (topic == null) {
             return null;
         }
-        topic.setName(topicUpdateDTO.getTopicName());
+        topic.setName(topicNoMessagesDTO.getName());
         return topicRepository.save(topic);
     }
 
