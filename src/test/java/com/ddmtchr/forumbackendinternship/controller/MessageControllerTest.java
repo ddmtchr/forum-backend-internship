@@ -69,7 +69,6 @@ public class MessageControllerTest extends AbstractControllerTest {
         Message message = topic.getMessages().stream().filter(m -> m.getId().equals("9ded9493-64cb-4b4a-ac57-0d0732282d42")).findFirst().orElse(null);
         assertNotNull(message);
         assertEquals("Message 42", message.getText());
-        assertEquals("Vasya", message.getAuthor());
     }
 
     @Test
@@ -116,6 +115,7 @@ public class MessageControllerTest extends AbstractControllerTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = "ADMIN")
     void deleteMessage_ReturnsNoContent() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/message/9ded9493-64cb-4b4a-ac57-0d0732282d42")).andReturn();
 

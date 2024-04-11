@@ -1,7 +1,6 @@
 package com.ddmtchr.forumbackendinternship.controller;
 
 import com.ddmtchr.forumbackendinternship.database.entities.Role;
-import com.ddmtchr.forumbackendinternship.database.entities.Roles;
 import com.ddmtchr.forumbackendinternship.database.entities.User;
 import com.ddmtchr.forumbackendinternship.payload.JwtResponse;
 import com.ddmtchr.forumbackendinternship.payload.LoginRequest;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -58,18 +56,7 @@ public class AuthController {
         }
         User user = new User(request.getUsername(), encoder.encode(request.getPassword()));
         Set<String> rolesString = request.getRoles();
-        Set<Role> roles = new HashSet<>();
-        if (rolesString == null || rolesString.isEmpty()) {
-            Role postsRole = roleService.findRoleByName(Roles.ROLE_USER); // by default
-            roles.add(postsRole);
-        } else {
-            rolesString.forEach((role) -> {
-                String withPrefix = "ROLE_" + role;
-                Roles eRole = Roles.valueOf(withPrefix);
-                Role userRole = roleService.findRoleByName(eRole);
-                roles.add(userRole);
-            });
-        }
+        Set<Role> roles = roleService.fillRoles(rolesString);
         user.setRoles(roles);
         userService.addUser(user);
         return new ResponseEntity<>("Registered", HttpStatus.CREATED);

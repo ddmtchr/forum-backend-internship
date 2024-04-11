@@ -7,7 +7,11 @@ import com.ddmtchr.forumbackendinternship.database.repository.TopicRepository;
 import com.ddmtchr.forumbackendinternship.mapper.MessageMapper;
 import com.ddmtchr.forumbackendinternship.payload.MessageDTO;
 import com.ddmtchr.forumbackendinternship.payload.MessageUpdateDTO;
+import com.ddmtchr.forumbackendinternship.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +22,8 @@ import java.util.List;
 public class MessageService {
     private final TopicRepository topicRepository;
     private final MessageRepository messageRepository;
+    private final JwtUtils jwtUtils;
+    private final UserDetailsService userDetailsService;
 
     public Boolean existsById(String id) {
         return messageRepository.existsById(id);
@@ -42,9 +48,12 @@ public class MessageService {
             List<Message> messages = messageRepository.findAllByTopicId(topicId);
             Message message = messages.stream().filter(m -> m.getId().equals(messageUpdateDTO.getId())).findFirst().orElse(null);
             if (message != null) {
-                message.setText(messageUpdateDTO.getText());
-                message.setAuthor(messageUpdateDTO.getAuthor());
-                return messageRepository.save(message);
+                UserDetails user = jwtUtils.getCurrentUser();
+                if (user.getUsername().equals(message.getAuthor()) || jwtUtils.hasRole(user, "ADMIN")) {
+                    message.setText(messageUpdateDTO.getText());
+                    return messageRepository.save(message);
+                }
+                throw new AccessDeniedException("No permission");
             }
             return null;
         }
@@ -55,8 +64,12 @@ public class MessageService {
     public void deleteMessage(String id) {
         Topic topic = topicRepository.findTopicByMessageId(id);
         Message message = messageRepository.findById(id).orElse(null);
-        topic.removeMessage(message);
-        topicRepository.save(topic);
-        if (topic.getMessages().isEmpty()) topicRepository.delete(topic); // could be done with db trigger
+        String author = message == null ? null : message.getAuthor();
+        UserDetails user = jwtUtils.getCurrentUser();
+        if (user.getUsername().equals(author) || jwtUtils.hasRole(user, "ADMIN")) {
+            topic.removeMessage(message);
+            topicRepository.save(topic);
+            if (topic.getMessages().isEmpty()) topicRepository.delete(topic); // could be done with db trigger
+        } else throw new AccessDeniedException("No permission");
     }
 }
