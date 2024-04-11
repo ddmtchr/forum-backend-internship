@@ -1,6 +1,7 @@
 package com.ddmtchr.forumbackendinternship.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,5 +23,10 @@ abstract class AbstractControllerTest {
     protected <T> T mapFromJson(String json, Class<T> clazz) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(json, clazz);
+    }
+
+    protected <T> T mapFromJson(String json, TypeReference<T> typeReference) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(json, typeReference);
     }
 }

@@ -1,19 +1,21 @@
 package com.ddmtchr.forumbackendinternship.controller;
 
+import com.ddmtchr.forumbackendinternship.database.entities.Message;
 import com.ddmtchr.forumbackendinternship.database.entities.Topic;
 import com.ddmtchr.forumbackendinternship.payload.MessageDTO;
 import com.ddmtchr.forumbackendinternship.payload.TopicDTO;
 import com.ddmtchr.forumbackendinternship.payload.TopicNoMessagesDTO;
+import com.ddmtchr.forumbackendinternship.util.ResponsePage;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,18 +30,18 @@ class TopicControllerTest extends AbstractControllerTest {
 
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
         String content = result.getResponse().getContentAsString();
-        Topic[] topicList = mapFromJson(content, Topic[].class);
-        assertTrue(topicList.length > 0);
+        Page<TopicNoMessagesDTO> topicList = mapFromJson(content, new TypeReference<ResponsePage<TopicNoMessagesDTO>>(){});
+        assertTrue(topicList.getTotalElements() > 0);
     }
 
     @Test
-    void getTopicsById_ReturnsTopic() throws Exception {
+    void getTopicsById_ReturnsMessagesList() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/topic/89a0ecb0-2fdf-4aae-8761-40f3f5bca6c6")).andReturn();
 
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
         String content = result.getResponse().getContentAsString();
-        Topic topic = mapFromJson(content, Topic.class);
-        assertEquals("89a0ecb0-2fdf-4aae-8761-40f3f5bca6c6", topic.getId());
+        Page<Message> messageList = mapFromJson(content,  new TypeReference<ResponsePage<Message>>(){});
+        assertTrue(messageList.getTotalElements() > 0);
     }
 
     @Test
@@ -75,8 +77,9 @@ class TopicControllerTest extends AbstractControllerTest {
 
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
         String content = result.getResponse().getContentAsString();
-        Topic[] topicList = mapFromJson(content, Topic[].class);
-        Topic topic = Arrays.stream(topicList).filter(t -> t.getId().equals("89a0ecb0-2fdf-4aae-8761-40f3f5bca6c6")).findFirst().orElse(null);
+        Page<TopicNoMessagesDTO> topicList = mapFromJson(content, new TypeReference<ResponsePage<TopicNoMessagesDTO>>(){});
+        assertTrue(topicList.getTotalElements() > 0);
+        TopicNoMessagesDTO topic = topicList.getContent().stream().filter(t -> t.getId().equals("89a0ecb0-2fdf-4aae-8761-40f3f5bca6c6")).findFirst().orElse(null);
         assertNotNull(topic);
         assertEquals("Topic 1 New Name", topic.getName());
     }

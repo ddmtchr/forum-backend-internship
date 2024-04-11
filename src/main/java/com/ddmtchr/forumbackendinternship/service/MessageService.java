@@ -9,9 +9,11 @@ import com.ddmtchr.forumbackendinternship.payload.MessageDTO;
 import com.ddmtchr.forumbackendinternship.payload.MessageUpdateDTO;
 import com.ddmtchr.forumbackendinternship.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +25,14 @@ public class MessageService {
     private final TopicRepository topicRepository;
     private final MessageRepository messageRepository;
     private final JwtUtils jwtUtils;
-    private final UserDetailsService userDetailsService;
 
     public Boolean existsById(String id) {
         return messageRepository.existsById(id);
+    }
+
+    public Page<Message> findAllByTopicId(int page, int size, String id) {
+        Pageable p = PageRequest.of(page, size);
+        return messageRepository.findAllByTopicId(id, p);
     }
 
     @Transactional

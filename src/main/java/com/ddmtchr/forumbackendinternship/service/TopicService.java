@@ -7,9 +7,11 @@ import com.ddmtchr.forumbackendinternship.mapper.TopicMapper;
 import com.ddmtchr.forumbackendinternship.payload.TopicDTO;
 import com.ddmtchr.forumbackendinternship.payload.TopicNoMessagesDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,9 +23,9 @@ public class TopicService {
         return topicRepository.existsById(id);
     }
 
-    public List<TopicNoMessagesDTO> findAllTopics() {
-        List<Topic> topics = (List<Topic>) topicRepository.findAll();
-        return topics.stream().map(TopicMapper.instance::toTopicMessageDTO).toList();
+    public Page<TopicNoMessagesDTO> findAllTopics(int page, int size) {
+        Pageable p = PageRequest.of(page, size);
+        return topicRepository.findAllProjected(p);
     }
 
     public Optional<Topic> findTopicById(String id) {

@@ -3,6 +3,7 @@ package com.ddmtchr.forumbackendinternship.controller;
 import com.ddmtchr.forumbackendinternship.database.entities.Topic;
 import com.ddmtchr.forumbackendinternship.payload.TopicDTO;
 import com.ddmtchr.forumbackendinternship.payload.TopicNoMessagesDTO;
+import com.ddmtchr.forumbackendinternship.service.MessageService;
 import com.ddmtchr.forumbackendinternship.service.TopicService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,19 +16,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1")
 public class TopicController {
     private final TopicService topicService;
+    private final MessageService messageService;
 
     @GetMapping("/topic")
-    public ResponseEntity<?> getAllTopics() {
-        return ResponseEntity.ok(topicService.findAllTopics());
+    public ResponseEntity<?> getAllTopics(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "15") int size) {
+        return ResponseEntity.ok(topicService.findAllTopics(page, size));
     }
 
     @GetMapping("/topic/{id}")
-    public ResponseEntity<?> getTopicById(@PathVariable String id) { //todo pagination
+    public ResponseEntity<?> getTopicById(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size,
+            @PathVariable String id) { //todo pagination
         Topic topic = topicService.findTopicById(id).orElse(null);
         if (topic == null) {
             return new ResponseEntity<>("Topic is not found", HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(topic);
+        return ResponseEntity.ok(messageService.findAllByTopicId(page, size, id));
     }
 
     @PostMapping("/topic")
@@ -36,11 +41,13 @@ public class TopicController {
     }
 
     @PutMapping("/topic")
-    public ResponseEntity<?> updateTopic(@RequestBody @Valid TopicNoMessagesDTO topicNoMessagesDTO) {
+    public ResponseEntity<?> updateTopic(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "15") int size,
+            @RequestBody @Valid TopicNoMessagesDTO topicNoMessagesDTO) {
         if (topicService.updateTopic(topicNoMessagesDTO) == null) {
             return new ResponseEntity<>("Topic is not found", HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(topicService.findAllTopics());
+        return ResponseEntity.ok(topicService.findAllTopics(page, size));
     }
 
     @DeleteMapping("/topic/{id}")
