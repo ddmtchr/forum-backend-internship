@@ -53,6 +53,7 @@ public class MessageControllerTest extends AbstractControllerTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = "ADMIN")
     void updateMessage_ReturnsList() throws Exception {
         MessageUpdateDTO messageDTO = new MessageUpdateDTO("9ded9493-64cb-4b4a-ac57-0d0732282d42", "Message 42", "Vasya");
         String inputJson = mapToJson(messageDTO);
@@ -73,6 +74,7 @@ public class MessageControllerTest extends AbstractControllerTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = "ADMIN")
     void updateMessage_WrongTopicId_ReturnsNotFound() throws Exception {
         MessageUpdateDTO messageDTO = new MessageUpdateDTO("9ded9493-64cb-4b4a-ac57-0d0732282d42", "Message 42", "Vasya");
         String inputJson = mapToJson(messageDTO);
@@ -86,6 +88,7 @@ public class MessageControllerTest extends AbstractControllerTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = "ADMIN")
     void updateMessage_WrongMessageId_ReturnsNotFound() throws Exception {
         MessageUpdateDTO messageDTO = new MessageUpdateDTO("aaa", "Message 42", "Vasya");
         String inputJson = mapToJson(messageDTO);
@@ -99,6 +102,7 @@ public class MessageControllerTest extends AbstractControllerTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = "ADMIN")
     void updateMessage_NoSuchMessageInTopic_ReturnsNotFound() throws Exception {
         MessageUpdateDTO messageDTO = new MessageUpdateDTO("9ded9493-64cb-4b4a-ac57-0d0732282d42", "Message 42", "Vasya");
         String inputJson = mapToJson(messageDTO);

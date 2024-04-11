@@ -4,6 +4,7 @@ import com.ddmtchr.forumbackendinternship.database.entities.Topic;
 import com.ddmtchr.forumbackendinternship.payload.MessageDTO;
 import com.ddmtchr.forumbackendinternship.payload.TopicDTO;
 import com.ddmtchr.forumbackendinternship.payload.TopicUpdateDTO;
+import lombok.With;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -66,6 +67,7 @@ class TopicControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void updateTopic_ReturnsOk() throws Exception {
         TopicUpdateDTO topicUpdateDTO = new TopicUpdateDTO("89a0ecb0-2fdf-4aae-8761-40f3f5bca6c6", "Topic 1 New Name");
         String inputJson = mapToJson(topicUpdateDTO);
@@ -81,6 +83,7 @@ class TopicControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void updateTopic_WrongId_ReturnsNotFound() throws Exception {
         TopicUpdateDTO topicUpdateDTO = new TopicUpdateDTO("aaa", "Topic 1 New Name");
         String inputJson = mapToJson(topicUpdateDTO);
@@ -90,6 +93,22 @@ class TopicControllerTest extends AbstractControllerTest {
         assertEquals(HttpStatus.NOT_FOUND.value(), result.getResponse().getStatus());
         String content = result.getResponse().getContentAsString();
         assertEquals("Topic is not found", content);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void deleteTopic_ReturnsNoContent() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/topic/16e08225-d756-4b29-b754-a5417a1a8c7f")).andReturn();
+
+        assertEquals(HttpStatus.NO_CONTENT.value(), result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void deleteTopic_WrongId_ReturnsNotFound() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/topic/aaa")).andReturn();
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), result.getResponse().getStatus());
     }
 
 }

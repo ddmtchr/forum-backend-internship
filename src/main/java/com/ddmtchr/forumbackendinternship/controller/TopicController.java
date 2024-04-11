@@ -22,7 +22,7 @@ public class TopicController {
     }
 
     @GetMapping("/topic/{id}")
-    public ResponseEntity<?> getTopicById(@PathVariable String id) {
+    public ResponseEntity<?> getTopicById(@PathVariable String id) { //todo pagination
         Topic topic = topicService.findTopicById(id).orElse(null);
         if (topic == null) {
             return new ResponseEntity<>("Topic is not found", HttpStatus.NOT_FOUND);
@@ -41,5 +41,14 @@ public class TopicController {
             return new ResponseEntity<>("Topic is not found", HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(topicService.findAllTopics());
+    }
+
+    @DeleteMapping("/topic/{id}")
+    public ResponseEntity<?> deleteTopic(@PathVariable String id) {
+        if (!topicService.existsById(id)) {
+            return new ResponseEntity<>("Topic is not found", HttpStatus.NOT_FOUND);
+        }
+        topicService.deleteTopic(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

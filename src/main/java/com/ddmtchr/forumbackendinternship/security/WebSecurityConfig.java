@@ -71,12 +71,14 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/topic/**").hasAnyRole("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/api/v1/topic/**").hasAnyRole("ADMIN")
                                 .requestMatchers("/api/v1/topic/**").hasAnyRole("ADMIN", "USER")
                                 .requestMatchers("/api/v1/message/**").hasAnyRole("ADMIN", "USER")
                                 .requestMatchers("/api/v1/auth/**").permitAll()
                                 .requestMatchers("/h2-console/**").permitAll()
                                 .anyRequest().authenticated()
+//                                .anyRequest().permitAll()
                 );
         http.headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
 

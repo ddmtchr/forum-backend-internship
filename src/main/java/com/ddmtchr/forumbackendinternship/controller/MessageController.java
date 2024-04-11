@@ -30,7 +30,7 @@ public class MessageController {
 
     @PutMapping("/topic/{topicId}/message")
     public ResponseEntity<?> updateMessage(@PathVariable String topicId, @RequestBody @Valid MessageUpdateDTO messageUpdateDTO) {
-        if (!topicService.existsById(topicId)) {
+        if (!topicService.existsById(topicId)) { //todo only user's messages
             return new ResponseEntity<>("Topic is not found", HttpStatus.NOT_FOUND);
         }
         Message message = messageService.updateMessage(topicId, messageUpdateDTO);
@@ -42,7 +42,7 @@ public class MessageController {
 
     @DeleteMapping("/message/{id}")
     public ResponseEntity<?> deleteMessage(@PathVariable String id) {
-        if (!messageService.existsById(id)) {
+        if (!messageService.existsById(id)) { //todo only user's messages
             return new ResponseEntity<>("Message is not found", HttpStatus.NOT_FOUND);
         }
         messageService.deleteMessage(id);
